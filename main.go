@@ -31,7 +31,7 @@ func main() {
 
  go middlewares.CleanupOldClients()
 
- r.Use(middlewares.ApiKeyMiddleware(), middlewares.RateLimitingMiddleware())
+ r.Use(middlewares.LoggerMiddleware(),middlewares.ApiKeyMiddleware(), middlewares.RateLimitingMiddleware() )
 
 
  v1 := r.Group("/api/v1")
