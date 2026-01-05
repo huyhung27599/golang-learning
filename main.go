@@ -5,21 +5,34 @@ import (
 	v2handler "golang-backend-fundamental-1/internal/api/v2/handler"
 	"golang-backend-fundamental-1/middlewares"
 	"golang-backend-fundamental-1/utils"
+	"log"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 
 
 func main() {
  // Create a Gin router with default middleware (logger and recovery)
- r := gin.Default()
+
 
 //  r.Use(middlewares.SimPleMiddleware())
 
  if err := utils.RegisterValidator(); err != nil {
 	panic(err)
  }
+
+ err := godotenv.Load()
+ if err != nil {
+ log.Println("Error loading .env file")
+ }
+ r := gin.Default()
+
+ go middlewares.CleanupOldClients()
+
+ r.Use(middlewares.ApiKeyMiddleware(), middlewares.RateLimitingMiddleware())
+
 
  v1 := r.Group("/api/v1")
  v2 := r.Group("/api/v2")
